@@ -47,6 +47,7 @@ class UserCrateSerializer(serializers.ModelSerializer):
             location_obj, _ = Location.objects.get_or_create(name=location)
             user.locations.add(location_obj)
 
+        user.set_password(user.password)
         user.save()
         return user
 
@@ -55,3 +56,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+    def save(self):
+        user = super().save()
+        user.set_password(user.password)
+        user.save()
+        return user
