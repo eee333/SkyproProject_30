@@ -5,20 +5,19 @@ from django.urls import path, include
 from rest_framework import routers
 
 from ads import views
-from ads.views import CategoryViewSet, AdViewSet
+from ads.views import CategoryViewSet
 from users.views import LocationViewSet
 
 router = routers.SimpleRouter()
 router.register('location', LocationViewSet)
 router.register('category', CategoryViewSet)
-router.register('ad', AdViewSet)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', views.index),
-    path('ad/<int:pk>/upload_image/', views.AdImageView.as_view()),
+    path('ad/', include('ads.urls')),
     path('user/', include('users.urls')),
 ]
 

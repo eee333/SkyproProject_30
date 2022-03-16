@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from ads.models import Category, Ad
@@ -19,7 +21,7 @@ class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
 
 
-class AdViewSet(ModelViewSet):
+class AdListView(ListAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
 
@@ -39,6 +41,32 @@ class AdViewSet(ModelViewSet):
             self.queryset = self.queryset.filter(price__lte=price_to)
 
         return super().list(request, *args, **kwargs)
+
+
+class AdDetailView(RetrieveAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class AdCreateView(CreateAPIView):
+    """
+    Создание пользователя с локацией по названию.
+    Если такой локации нет, то она будет создана.
+    Локации передаются списком названий.
+    """
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+
+
+class AdUpdateView(UpdateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+
+
+class AdDeleteView(DestroyAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
