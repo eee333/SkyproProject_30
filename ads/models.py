@@ -34,7 +34,7 @@ class Ad(models.Model):
 
 class Selection(models.Model):
     name = models.CharField(max_length=50)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     items = models.ManyToManyField(Ad)
 
     class Meta:

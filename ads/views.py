@@ -9,6 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from ads.models import Category, Ad, Selection
 from ads.serializers import CategorySerializer, AdSerializer, SelectionSerializer, SelectionDetailSerializer
+from users.permissions import AdminPermission, OwnerPermission, ModeratorPermission, EditPermission
 
 
 def index(request):
@@ -58,19 +59,19 @@ class AdCreateView(CreateAPIView):
 class AdUpdateView(UpdateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EditPermission]
 
 
 class AdDeleteView(DestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EditPermission]
 
 
 class AdImageUploadView(UpdateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, OwnerPermission]
 
 
 class SelectionListView(ListAPIView):
@@ -81,7 +82,6 @@ class SelectionListView(ListAPIView):
 class SelectionDetailView(RetrieveAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionDetailSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class SelectionCreateView(CreateAPIView):
@@ -93,10 +93,10 @@ class SelectionCreateView(CreateAPIView):
 class SelectionUpdateView(UpdateAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EditPermission]
 
 
 class SelectionDeleteView(DestroyAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, EditPermission]
