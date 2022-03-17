@@ -6,6 +6,6 @@ project 30
 
 Все запросы Можно протестиравать в Постман
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/5142b79eac64876e46a8?action=collection%2Fimport)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/edc5ff072bfa48d40a19?action=collection%2Fimport)
 
 
