@@ -1,15 +1,14 @@
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import UpdateView
+
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from ads.models import Category, Ad, Selection
 from ads.serializers import CategorySerializer, AdSerializer, SelectionSerializer, SelectionDetailSerializer
-from users.permissions import AdminPermission, OwnerPermission, ModeratorPermission, EditPermission
+from users.permissions import ReadOnlyOrAdminPermissionList, OwnerPermissionOne, \
+    AdminPermissionOne, ModeratorPermissionOne
 
 
 def index(request):
@@ -20,6 +19,7 @@ def index(request):
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [ReadOnlyOrAdminPermissionList]
 
 
 class AdListView(ListAPIView):
@@ -59,19 +59,22 @@ class AdCreateView(CreateAPIView):
 class AdUpdateView(UpdateAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated, EditPermission]
+    permission_classes = [OwnerPermissionOne | ModeratorPermissionOne | AdminPermissionOne]
 
 
 class AdDeleteView(DestroyAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated, EditPermission]
+    permission_classes = [OwnerPermissionOne | AdminPermissionOne]
 
 
 class AdImageUploadView(UpdateAPIView):
+    """Загрузка картинки возможна только в существующее объяввление
+    и разрешена только автору объявления.
+    """
     queryset = Ad.objects.all()
     serializer_class = AdSerializer
-    permission_classes = [IsAuthenticated, OwnerPermission]
+    permission_classes = [OwnerPermissionOne]
 
 
 class SelectionListView(ListAPIView):
@@ -93,10 +96,10 @@ class SelectionCreateView(CreateAPIView):
 class SelectionUpdateView(UpdateAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionSerializer
-    permission_classes = [IsAuthenticated, EditPermission]
+    permission_classes = [OwnerPermissionOne | AdminPermissionOne]
 
 
 class SelectionDeleteView(DestroyAPIView):
     queryset = Selection.objects.all()
     serializer_class = SelectionSerializer
-    permission_classes = [IsAuthenticated, EditPermission]
+    permission_classes = [OwnerPermissionOne | AdminPermissionOne]

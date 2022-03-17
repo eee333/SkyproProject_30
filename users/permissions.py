@@ -1,32 +1,90 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
+
 from users.models import User
 
 
-class AdminPermission(permissions.BasePermission):
+class AdminPermissionOne(permissions.BasePermission):
+    message = 'This operation is available only to the Admin.'
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated and request.user.role == User.ADMIN:
+            return True
+        return False
+
+
+class AdminPermissionList(permissions.BasePermission):
     message = 'This operation is available only to the Admin.'
 
     def has_permission(self, request, view):
-        return request.user.role == User.ADMIN
+        return bool(
+            request.user.is_authenticated and
+            request.user.role == User.ADMIN
+        )
 
 
-class ModeratorPermission(permissions.BasePermission):
-    message = 'This operation is available only to Moderator or Admin.'
+class ModeratorPermissionOne(permissions.BasePermission):
+    message = 'This operation is available only to the Moderator.'
+
+    def has_object_permission(self, request, view, obj):
+        return bool(
+            request.user.is_authenticated and
+            request.user.role == User.MODERATOR
+        )
+
+
+class ModeratorPermissionList(permissions.BasePermission):
+    message = 'This operation is available only to the Moderator.'
 
     def has_permission(self, request, view):
-        return request.user.role == User.MODERATOR
+        return bool(
+            request.user.is_authenticated and
+            request.user.role == User.MODERATOR
+        )
 
 
-class OwnerPermission(permissions.BasePermission):
+class OwnerPermissionOne(permissions.BasePermission):
+    message = 'This operation is available only to the Owner.'
+
+    def has_object_permission(self, request, view, obj):
+        return bool(
+            request.user.is_authenticated and
+            obj.user == request.user
+        )
+
+
+class OwnerUserPermissionOne(permissions.BasePermission):
+    """For User model only"""
+    message = 'This operation is available only to the Owner.'
+
+    def has_object_permission(self, request, view, obj):
+        return bool(
+            request.user.is_authenticated and
+            obj.id == request.user.id
+        )
+
+
+class OwnerOrModerPermissionOne(permissions.BasePermission):
     message = 'This operation is available only to Owner or Moderator or Admin.'
 
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
+        return bool(
+            request.user.is_authenticated and
+            (obj.user == request.user or
+             request.user.role == User.ADMIN or
+             request.user.role == User.MODERATOR)
+        )
 
 
-class EditPermission(permissions.BasePermission):
-    message = 'This operation is available only to Owner or Moderator or Admin.'
+class ReadOnlyOrAdminPermissionList(permissions.BasePermission):
+    """
+    The request is authenticated as admin, or is a read-only request.
+    """
+    message = 'This operation is available only to the Admin.'
 
-    def has_object_permission(self, request, view, obj):
-        if (obj.user == request.user) | (request.user.role == User.ADMIN) | (request.user.role == User.MODERATOR):
-            return True
-        return False
+    def has_permission(self, request, view):
+        return bool(
+            request.method in SAFE_METHODS or
+            request.user.is_authenticated and
+            request.user.role == User.ADMIN
+        )
