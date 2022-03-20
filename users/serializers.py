@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from users.models import User, Location
 
@@ -58,7 +59,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def save(self):
-        user = super().save()
-        user.set_password(user.password)
-        user.save()
-        return user
+        if password := self.validated_data.get('password'):
+            self.validated_data['password'] = make_password(password)
+        return super().save()
