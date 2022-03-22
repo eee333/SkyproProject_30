@@ -5,7 +5,7 @@ from ads.models import Ad
 @pytest.mark.django_db
 def test_ad_list(client):
     ad = Ad.objects.create(
-        name="Test name",
+        name="Test name 2",
         price=200,
         description="Test description",
     )
@@ -16,7 +16,7 @@ def test_ad_list(client):
         "previous": None,
         "results": [{
             "id": ad.pk,
-            "name": "Test name",
+            "name": "Test name 2",
             "price": "200",
             "description": "Test description",
             "user": None,
