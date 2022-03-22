@@ -24,12 +24,11 @@ class User(AbstractUser):
         (MODERATOR, "Модератор"),
         (ADMIN, "Админ"),
     ]
-    # first_name = models.CharField(max_length=20)
-    # last_name = models.CharField(max_length=20)
-    # username = models.CharField(max_length=50)
-    # password = models.CharField(max_length=50)
+
+    email = models.EmailField(unique=True)
     role = models.CharField(max_length=9, choices=ROLES, default="member")
-    age = models.PositiveIntegerField(null=True)
+    # age = models.PositiveIntegerField(null=True)
+    birth_date = models.DateField(null=True, default="2000-01-01")
     locations = models.ManyToManyField(Location)
 
     class Meta:

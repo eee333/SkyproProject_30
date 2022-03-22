@@ -1,6 +1,23 @@
+from datetime import date
+
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from users.models import User, Location
+
+
+def calculate_age(birth_date):
+    today = date.today()
+    age = today.year - birth_date.year
+    full_year_passed = (today.month, today.day) < (birth_date.month, birth_date.day)
+    if not full_year_passed:
+        age -= 1
+    return age
+
+
+class CheckRumblerEmail:
+    def __call__(self, value):
+        if value.endswith("rambler.ru"):
+            raise serializers.ValidationError("rambler.ru not allowed")
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -30,10 +47,16 @@ class UserCrateSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='name'
     )
+    email = serializers.EmailField(validators=[CheckRumblerEmail()])
 
     class Meta:
         model = User
         fields = '__all__'
+
+    def validate_birth_date(self, value):
+        if calculate_age(value) < 9:
+            raise serializers.ValidationError("At least 9 years old")
+        return value
 
     def is_valid(self, raise_exception=False):
         self._locations = []
@@ -54,9 +77,17 @@ class UserCrateSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(validators=[CheckRumblerEmail()])
+
     class Meta:
         model = User
         fields = '__all__'
+
+    def validate_birth_date(self, value):
+        if calculate_age(value) < 9:
+            raise serializers.ValidationError("Incorrect dismiss date")
+        return value
 
     def save(self):
         if password := self.validated_data.get('password'):
