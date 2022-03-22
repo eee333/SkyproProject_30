@@ -25,7 +25,7 @@ class User(AbstractUser):
         (ADMIN, "Админ"),
     ]
 
-    email = models.EmailField(unique=True)
+    email = models.EmailField(null=True)
     role = models.CharField(max_length=9, choices=ROLES, default="member")
     # age = models.PositiveIntegerField(null=True)
     birth_date = models.DateField(null=True, default="2000-01-01")
