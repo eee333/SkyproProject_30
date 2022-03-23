@@ -1,3 +1,4 @@
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -5,6 +6,7 @@ from users.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    slug = models.CharField(unique=True, null=True, max_length=10, validators=[MinLengthValidator(5)])
 
     class Meta:
         verbose_name = "Категория"
@@ -15,8 +17,8 @@ class Category(models.Model):
 
 
 class Ad(models.Model):
-    name = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=12, decimal_places=0)
+    name = models.CharField(max_length=50, validators=[MinLengthValidator(10)])
+    price = models.DecimalField(max_digits=12, decimal_places=0, validators=[MinValueValidator(0)])
     description = models.TextField(max_length=1000, null=True)
     is_published = models.BooleanField(default=False)
     image = models.ImageField(upload_to='media/', null=True)
@@ -34,7 +36,7 @@ class Ad(models.Model):
 
 class Selection(models.Model):
     name = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     items = models.ManyToManyField(Ad)
 
     class Meta:

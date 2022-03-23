@@ -9,6 +9,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class AdSerializer(serializers.ModelSerializer):
+    is_published = serializers.BooleanField(default=serializers.CreateOnlyDefault(False))
+
     class Meta:
         model = Ad
         fields = '__all__'
