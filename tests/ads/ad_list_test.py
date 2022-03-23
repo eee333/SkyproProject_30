@@ -1,24 +1,19 @@
 import pytest
-from ads.models import Ad
+
+from ads.serializers import AdSerializer
+from tests.factory import AdFactory
 
 
 @pytest.mark.django_db
-def test_ad_list(client, ad):
+def test_ad_list(client):
+
+    ads = AdFactory.create_batch(10)
 
     expected_response = {
-        "count": 1,
+        "count": 10,
         "next": None,
         "previous": None,
-        "results": [{
-            "id": ad.pk,
-            "name": "Test name 2",
-            "price": "200",
-            "description": "Test description",
-            "user": ad.user_id,
-            "category": None,
-            "is_published": False,
-            "image": None,
-        }]
+        "results": AdSerializer(ads, many=True).data
     }
 
     response = client.get("/ad/")

@@ -8,9 +8,9 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    username = "member"
+    username = factory.Faker("name")
     password = "1234"
-    email = "qqq@qqq.qq"
+    email = factory.Faker("email")
 
 
 class AdFactory(factory.django.DjangoModelFactory):
