@@ -23,7 +23,7 @@ def test_ad_create(client, member_token):
         "/ad/create/",
         data,
         content_type="application/json",
-        HTTP_AUTHORIZATION="Bearer " + member_token
+        HTTP_AUTHORIZATION="Bearer " + member_token["access"]
     )
 
     assert response.status_code == 201

@@ -1,6 +1,6 @@
 import factory
 
-from ads.models import Ad
+from ads.models import Ad, Selection
 from users.models import User
 
 
@@ -21,3 +21,12 @@ class AdFactory(factory.django.DjangoModelFactory):
     price = "200"
     description = "Test description"
     user = factory.SubFactory(UserFactory)
+
+
+class SelectionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Selection
+
+    name = "Test selection"
+    user = factory.SubFactory(UserFactory)
+    items = [1, 2]
